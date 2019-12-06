@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Monster Slayer</title>
+    <script src="https://npmcdn.com/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="css/foundation.min.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+    <div id="app">
+        <section class="row">
+            <div class="small-6 columns">
+                <h1 class="text-center">YOU</h1>
+                <div class="healthbar">
+                    <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;">
+                        {{player}}
+                    </div>
+                </div>
+            </div>
+            <div class="small-6 columns">
+                <h1 class="text-center">MONSTER</h1>
+                <div class="healthbar">
+                    <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;">
+                        {{monster}}
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="row controls">
+            <div class="small-12 columns">
+                <button id="start-game" @click="startGame">START NEW GAME</button>
+            </div>
+        </section>
+        <section class="row controls" v-if="started">
+            <div class="small-12 columns">
+                <button id="attack" @click="attack">ATTACK</button>
+                <button id="special-attack" @click="specialAtt">SPECIAL ATTACK</button>
+                <button id="heal" @click="heal">HEAL</button>
+                <button id="give-up" @click="refreshGame">GIVE UP</button>
+            </div>
+        </section>
+        <section class="row log" v-if="logs.length > 0">
+            <div class="small-12 columns">
+                <ul>
+                    <li v-for="(log,id) in logs" :key="id" :style="logStyle(log.type)">
+                        {{log.text}}
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</body>
+<script>
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+    }
+    new Vue({
+        el: "#app",
+        data: {
+            player: 100,
+            monster: 100,
+            started: false,
+            logs: [] // {type:'player', text:'msg'}
+        },
+        watch: {
+            player: function (val) {
+                if (val <= 0) {
+                    alert("YOU LOSE!")
+                    this.started = false
+                }
+            },
+            monster: function (val) {
+                if (val <= 0) {
+                    alert("YOU WIN!")
+                    this.started = false
+                }
+            },
+        },
+        methods: {
+            refreshGame: function () {
+                this.player = 100
+                this.monster = 100
+                this.logs = []
+                this.started = false
+            },
+            startGame: function () {
+                this.refreshGame()
+                this.started = true
+            },
+            specialAtt: function () {
+                this.playerAtt(true)
+                this.monsterAtt()
+            },
+            heal: function () {
+                let healAm = getRandomInt(5, 10)
+                this.player += healAm
+                this.logs.push({
+                    type: 'player',
+                    text: `Player healed ${healAm}`
+                })
+                this.monsterAtt()
+            },
+            monsterAtt: function () {
+                let attm = getRandomInt(5, 10)
+                this.player -= attm
+                this.logs.push({
+                    type: 'monster',
+                    text: `Monster attacked ${attm}`
+                })
+            },
+            playerAtt: function (special = false) {
+                let attp = getRandomInt(1, 10)
+                let spAtt = special ? 10 : 0
+                attp += spAtt
+                this.monster -= attp
+                this.logs.push({
+                    type: 'player',
+                    text: `Player attacked ${attp}`
+                })
+
+            },
+            attack: function () {
+                this.playerAtt()
+                this.monsterAtt()
+            },
+            logStyle: function (type) {
+                return type === 'player' ? {
+                    backgroundColor: 'green'
+                } : {
+                    backgroundColor: 'red'
+                }
+            }
+        }
+    })
+</script>
+
+</html>
