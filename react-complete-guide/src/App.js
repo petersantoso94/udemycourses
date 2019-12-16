@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import Person from "./Person/Person";
+import Person from "./components/Person/Person";
 import { useForm } from "./Hooks/useForm";
+import PersonList from "./components/Person/PersonList";
 
 function App() {
   const [persons, setPersons] = useState(() => [
@@ -49,17 +50,7 @@ function App() {
         <input name="username" value={formval.username} onChange={handler} />
         <input name="password" value={formval.password} onChange={handler} />
         <button onClick={addPerson}>add person</button>
-        {persons.map((el, idx) => {
-          return (
-            <Person
-              deletePerson={deletePerson}
-              name={el.name}
-              age={el.age}
-              key={idx}
-              idx={idx}
-            />
-          );
-        })}
+        <PersonList persons={persons} deletePerson={deletePerson} />
       </header>
     </div>
   );
