@@ -16,7 +16,7 @@ const Person = memo(({ name, age, deletePerson, idx }) => {
     return () => {
       // when element unmount
       isMounted.current = false;
-      console.log(name + " unmount", isMounted.current);
+      console.log(" unmount", isMounted.current);
       //   isMounted = false;
 
       //   console.log("counter from unmount", counter.current);

@@ -35,6 +35,32 @@ export class BookResolver {
     return { book };
   }
 
+  @Mutation(() => BookResponse)
+  @UseMiddleware(isAuth)
+  async deleteBook(
+    @Ctx() ctx: MyContext,
+    @Arg("id", () => Number) id: number
+  ): Promise<BookResponse | undefined> {
+    if (!ctx.req.session!.userId) {
+      return undefined;
+    }
+    const wantedBook = await Book.findOne({ id });
+    console.log(wantedBook);
+    if (!wantedBook) {
+      return {
+        errors: [
+          {
+            path: "book",
+            message: "not found"
+          }
+        ]
+      };
+    }
+    await Book.remove(wantedBook);
+
+    return { book: wantedBook };
+  }
+
   @Query(() => [Book], { nullable: true })
   @UseMiddleware(isAuth)
   async books(

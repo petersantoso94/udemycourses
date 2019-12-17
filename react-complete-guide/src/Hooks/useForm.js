@@ -7,6 +7,9 @@ export const useForm = initState => {
     value,
     e => {
       setValue({ ...value, [e.target.name]: e.target.value });
+    },
+    () => {
+      setValue({ ...initState });
     }
   ];
 };

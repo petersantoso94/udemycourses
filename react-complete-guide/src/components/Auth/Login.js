@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { useForm } from "../../Hooks/useForm";
-import Cookies from "js-cookie";
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
 

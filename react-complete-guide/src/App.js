@@ -3,9 +3,8 @@ import logo from "./logo.svg";
 import "./App.css";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
-import BookList from "./components/Books/BookList";
-import Login from "./components/Auth/Login";
-import Tutorial from "./components/Tutorials/Tutorial";
+import Tutorial from "./components/Container/Tutorial";
+import Library from "./components/Container/Library";
 
 const client = new ApolloClient({
   uri: process.env.REACT_APP_GRAPHQL_URL + "/graphql",
@@ -13,9 +12,8 @@ const client = new ApolloClient({
 });
 
 function App() {
-  let counter = useRef(0);
-  console.log("App rendered:", counter.current++);
-  const [isLogin, setIsLogin] = useState(() => localStorage.getItem("isLogin"));
+  // let counter = useRef(0);
+  // console.log("App rendered:", counter.current++);
   const [showTutorial, setShowTutorial] = useState(() => false);
 
   return (
@@ -25,9 +23,7 @@ function App() {
           <h3>React tutorials point</h3>
           <img src={logo} className="App-logo" alt="logo react" width="100px" />
           <hr></hr>
-          <h4>Graphql books library</h4>
-          {!isLogin ? <Login setIsLogin={setIsLogin} /> : null}
-          {isLogin ? <BookList setIsLogin={setIsLogin} /> : null}
+          <Library />
           <hr></hr>
           <button onClick={() => setShowTutorial(cur => !cur)}>
             {showTutorial ? "Hide" : "Show"} tutorial
