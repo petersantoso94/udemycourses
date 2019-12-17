@@ -9,14 +9,14 @@ const Person = memo(({ name, age, deletePerson, idx }) => {
   let isMounted = useRef(true);
   //   let isMounted = true;
   let counter = useRef(0);
-  console.log(counter.current++);
-  console.log("from outside", isMounted);
+  console.log(name + " : " + counter.current++);
+  console.log(name + " outside isMounted: ", isMounted);
 
   useEffect(() => {
     return () => {
       // when element unmount
       isMounted.current = false;
-      console.log("unmount", isMounted.current);
+      console.log(name + " unmount", isMounted.current);
       //   isMounted = false;
 
       //   console.log("counter from unmount", counter.current);

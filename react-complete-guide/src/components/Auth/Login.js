@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useForm } from "../../Hooks/useForm";
 import Cookies from "js-cookie";
 import gql from "graphql-tag";
@@ -19,6 +19,8 @@ const LOGIN = gql`
 `;
 
 const Login = props => {
+  let counter = useRef(0);
+  console.log("Login rendered:", counter.current++);
   const [formval, handler] = useForm({ password: "", email: "" });
   const [
     login,
