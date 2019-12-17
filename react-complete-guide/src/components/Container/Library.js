@@ -4,7 +4,6 @@ import BookList from "../Books/BookList";
 import AddBook from "../Books/AddBook";
 import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import { useForm } from "../../Hooks/useForm";
 
 const GET_BOOKS = gql`
   {
@@ -47,7 +46,7 @@ const ADD_NEW_BOOK = gql`
   }
 `;
 
-const Library = memo(() => {
+const Library = memo(props => {
   let counter = useRef(0);
   console.log("Library rendered:", counter.current++);
   const [isLogin, setIsLogin] = useState(() => localStorage.getItem("isLogin"));
@@ -59,7 +58,6 @@ const Library = memo(() => {
   }, [timeout]);
   const [isSuccess, setIsSuccess] = useState(() => "");
   const [isSuccessAdd, setIsSuccessAdd] = useState(() => false);
-  const [formval, handler, reset] = useForm({ author: "", name: "" });
 
   // GET BOOK
   const { loading, error, data } = useQuery(GET_BOOKS);
@@ -119,7 +117,7 @@ const Library = memo(() => {
     }
   });
 
-  const addBook = e => {
+  const addBook = (e, formval) => {
     e.preventDefault();
     addBookQuery({
       variables: { author: formval.author, name: formval.name }
@@ -130,7 +128,6 @@ const Library = memo(() => {
         timeout = setTimeout(() => {
           setIsSuccessAdd(false);
         }, 1000);
-        reset();
       } else {
         console.log(data.data.newBook.errors);
       }
@@ -140,7 +137,7 @@ const Library = memo(() => {
 
   const child = isLogin ? (
     <>
-      <AddBook addBook={addBook} formval={formval} handler={handler} />
+      <AddBook addBook={addBook} />
       <BookList
         setIsLogin={setIsLogin}
         loading={loading}
