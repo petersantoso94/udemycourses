@@ -1,5 +1,13 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+Including graphql integration with [apollo-client(react)](https://www.apollographql.com/docs/react/data/queries/#caching-query-results), required package can be installed by:
+
+### `npm install apollo-boost @apollo/react-hooks graphql`
+
+Using .env handler:
+
+### `npm install --save-dev dotenv`
+
 ## Available Scripts
 
 In the project directory, you can run:

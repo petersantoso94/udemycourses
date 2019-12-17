@@ -1,4 +1,4 @@
-import React, { Children, useState, useEffect, useRef, memo } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 
 // set globally wont affect each state change, but it is better to put it within function scope
 // let isMounted = true;

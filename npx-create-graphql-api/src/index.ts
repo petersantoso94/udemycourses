@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { createConnection, getConnectionOptions } from "typeorm";
 import express from "express";
+var cors = require("cors");
 import session from "express-session";
 import connectSqlite3 from "connect-sqlite3";
 import { ApolloServer } from "apollo-server-express";
@@ -13,6 +14,12 @@ const SQLiteStore = connectSqlite3(session);
 
 (async () => {
   const app = express();
+  const corsOptions = {
+    origin: "http://localhost:3001",
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+    credentials: true
+  };
+  app.use(cors(corsOptions));
 
   app.use(
     session({
