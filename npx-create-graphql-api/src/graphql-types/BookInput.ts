@@ -8,3 +8,12 @@ export class BookInput {
   @Field()
   author: string;
 }
+
+@InputType()
+export class SearchBookInput {
+  @Field(() => String, { nullable: true })
+  name: string | null;
+
+  @Field(() => String, { nullable: true })
+  author: string | null;
+}

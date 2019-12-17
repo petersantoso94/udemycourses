@@ -10,7 +10,7 @@ import { isAuth } from "../middleware/isAuth";
 import { BookResponse } from "../graphql-types/BookResponse";
 import { Book } from "../entity/Book";
 import { MyContext } from "../graphql-types/MyContext";
-import { BookInput } from "../graphql-types/BookInput";
+import { BookInput, SearchBookInput } from "../graphql-types/BookInput";
 
 @Resolver()
 export class BookResolver {
@@ -38,14 +38,23 @@ export class BookResolver {
   @Query(() => [Book], { nullable: true })
   @UseMiddleware(isAuth)
   async books(
-    @Ctx() ctx: MyContext
-    // @Arg("name", () => String, { nullable: true }) name: string,
-    // @Arg("author", () => String, { nullable: true }) author: string
+    @Ctx() ctx: MyContext,
+    @Arg("options", () => SearchBookInput, { nullable: true })
+    options: SearchBookInput
   ): Promise<Book[] | undefined> {
     if (!ctx.req.session!.userId) {
       return undefined;
     }
 
-    return Book.find();
+    let bookOptions = <Book>{};
+
+    if (options && options.author) {
+      bookOptions.author = options.author;
+    }
+    if (options && options.name) {
+      bookOptions.name = options.name;
+    }
+
+    return Book.find(bookOptions);
   }
 }
