@@ -49,7 +49,7 @@ const ADD_NEW_BOOK = gql`
 
 const Library = memo(() => {
   let counter = useRef(0);
-  //   console.log("Library rendered:", counter.current++);
+  console.log("Library rendered:", counter.current++);
   const [isLogin, setIsLogin] = useState(() => localStorage.getItem("isLogin"));
   let timeout;
   useEffect(() => {

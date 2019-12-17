@@ -1,7 +1,5 @@
-import React, { useRef, memo, useEffect, useState, useCallback } from "react";
+import React, { memo } from "react";
 import Book from "./Book";
-import gql from "graphql-tag";
-import { useQuery, useMutation } from "@apollo/react-hooks";
 
 const BookList = memo(({ loading, deleteBook, data }) => {
   //   let counter = useRef(0);
