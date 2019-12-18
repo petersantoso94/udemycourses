@@ -82,6 +82,8 @@ const Library = memo(props => {
   const [status, setStatus] = useState(() => "Add");
   const [selectedIdx, setSelectedIdx] = useState(() => -1);
 
+  const setAllCallback = useCallback(setAll, []);
+
   // GET BOOK
   const { loading, error, data } = useQuery(GET_BOOKS);
   if (error) {
@@ -112,16 +114,19 @@ const Library = memo(props => {
     }
   });
 
-  const deleteBook = useCallback((idx, name) => {
-    deleteBookMutation({ variables: { id: idx } }).then(resp => {
-      if (resp.data && resp.data.deleteBook && resp.data.deleteBook.book) {
-        setIsSuccess(name);
-        timeout.current = setTimeout(() => {
-          setIsSuccess("");
-        }, 1000);
-      } else console.log(resp.data.deleteBook.errors.message);
-    });
-  }, []);
+  const deleteBook = useCallback(
+    (idx, name) => {
+      deleteBookMutation({ variables: { id: idx } }).then(resp => {
+        if (resp.data && resp.data.deleteBook && resp.data.deleteBook.book) {
+          setIsSuccess(name);
+          timeout.current = setTimeout(() => {
+            setIsSuccess("");
+          }, 1000);
+        } else console.log(resp.data.deleteBook.errors.message);
+      });
+    },
+    [deleteBookMutation]
+  );
   // END OF DELETE BOOK
 
   // EDIT BOOK
@@ -147,15 +152,18 @@ const Library = memo(props => {
     }
   });
 
-  const editBook = useCallback((idx, data) => {
-    setStatus("Edit");
-    setSelectedIdx(idx);
-    const selectedBook = data.books.filter(book => book.id === idx)[0];
-    // formval.name = selectedBook.name;
-    // formval.author = selectedBook.author;
-    // need this bcs value in the handler not updated in this scoped function
-    setAll({ author: selectedBook.author, name: selectedBook.name });
-  }, []);
+  const editBook = useCallback(
+    (idx, data) => {
+      setStatus("Edit");
+      setSelectedIdx(idx);
+      const selectedBook = data.books.filter(book => book.id === idx)[0];
+      // formval.name = selectedBook.name;
+      // formval.author = selectedBook.author;
+      // need this bcs value in the handler not updated in this scoped function
+      setAllCallback({ author: selectedBook.author, name: selectedBook.name });
+    },
+    [setAllCallback]
+  );
 
   const submitEditBook = e => {
     e.preventDefault();
