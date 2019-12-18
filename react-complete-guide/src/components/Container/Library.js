@@ -68,9 +68,10 @@ const Library = memo(props => {
   let counter = useRef(0);
   console.log("Library rendered:", counter.current++);
   const [isLogin, setIsLogin] = useState(() => localStorage.getItem("isLogin"));
-  let timeout;
+  let timeout = useRef(null);
   useEffect(() => {
     return () => {
+      console.log("clearing timeout...");
       clearTimeout(timeout);
     };
   }, [timeout]);
@@ -111,19 +112,16 @@ const Library = memo(props => {
     }
   });
 
-  const deleteBook = useCallback(
-    (idx, name) => {
-      deleteBookMutation({ variables: { id: idx } }).then(resp => {
-        if (resp.data && resp.data.deleteBook && resp.data.deleteBook.book) {
-          setIsSuccess(name);
-          timeout = setTimeout(() => {
-            setIsSuccess("");
-          }, 1000);
-        } else console.log(resp.data.deleteBook.errors.message);
-      });
-    },
-    [data]
-  );
+  const deleteBook = useCallback((idx, name) => {
+    deleteBookMutation({ variables: { id: idx } }).then(resp => {
+      if (resp.data && resp.data.deleteBook && resp.data.deleteBook.book) {
+        setIsSuccess(name);
+        timeout.current = setTimeout(() => {
+          setIsSuccess("");
+        }, 1000);
+      } else console.log(resp.data.deleteBook.errors.message);
+    });
+  }, []);
   // END OF DELETE BOOK
 
   // EDIT BOOK
@@ -170,11 +168,11 @@ const Library = memo(props => {
     }).then(resp => {
       if (resp.data && resp.data.editBook && resp.data.editBook.book) {
         setIsSuccessEdit(formval.name);
-        timeout = setTimeout(() => {
+        timeout.current = setTimeout(() => {
           setIsSuccessEdit("");
         }, 1000);
         setStatus("Add");
-      } else console.log(resp.data.editBook.errors.message);
+      } else console.log(resp);
     });
   };
   // END OF EDIT BOOK
@@ -203,7 +201,7 @@ const Library = memo(props => {
       if (data && data.data && data.data.newBook && data.data.newBook.book) {
         // success insert
         setIsSuccessAdd(true);
-        timeout = setTimeout(() => {
+        timeout.current = setTimeout(() => {
           setIsSuccessAdd(false);
         }, 1000);
       } else {

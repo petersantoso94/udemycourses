@@ -11,6 +11,7 @@ import { BookResponse } from "../graphql-types/BookResponse";
 import { Book } from "../entity/Book";
 import { MyContext } from "../graphql-types/MyContext";
 import { BookInput, SearchBookInput } from "../graphql-types/BookInput";
+import { Not } from "typeorm";
 
 @Resolver()
 export class BookResolver {
@@ -77,6 +78,19 @@ export class BookResolver {
           {
             path: "book",
             message: "not found"
+          }
+        ]
+      };
+    }
+
+    const existingBook = await Book.findOne({ name: book.name, id: Not(id) });
+
+    if (existingBook) {
+      return {
+        errors: [
+          {
+            path: "name",
+            message: "already in use"
           }
         ]
       };
