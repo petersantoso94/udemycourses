@@ -5,6 +5,7 @@ import BookInput from "../Books/BookInput";
 import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { useForm } from "../../Hooks/useForm";
+import { BookContext } from "../../Hooks/context/BookContext";
 
 const GET_BOOKS = gql`
   {
@@ -76,7 +77,7 @@ const Library = memo(props => {
   const [isSuccess, setIsSuccess] = useState(() => "");
   const [isSuccessAdd, setIsSuccessAdd] = useState(() => false);
   const [isSuccessEdit, setIsSuccessEdit] = useState(() => "");
-  const [formval, handler, reset] = useForm({ author: "", name: "" });
+  const [formval, handler, reset, setAll] = useForm({ author: "", name: "" });
   const [status, setStatus] = useState(() => "Add");
   const [selectedIdx, setSelectedIdx] = useState(() => -1);
 
@@ -148,18 +149,15 @@ const Library = memo(props => {
     }
   });
 
-  const editBook = useCallback(
-    idx => {
-      setStatus("Edit");
-      setSelectedIdx(idx);
-      const selectedBook = data.books.filter(book => book.id === idx)[0];
-      formval.name = selectedBook.name;
-      formval.author = selectedBook.author;
-      // handler({ target: { name: "name", value: selectedBook.name } });
-      // handler({ target: { name: "author", value: selectedBook.author } });
-    },
-    [data]
-  );
+  const editBook = useCallback((idx, data) => {
+    setStatus("Edit");
+    setSelectedIdx(idx);
+    const selectedBook = data.books.filter(book => book.id === idx)[0];
+    // formval.name = selectedBook.name;
+    // formval.author = selectedBook.author;
+    // need this bcs value in the handler not updated in this scoped function
+    setAll({ author: selectedBook.author, name: selectedBook.name });
+  }, []);
 
   const submitEditBook = e => {
     e.preventDefault();
@@ -226,13 +224,14 @@ const Library = memo(props => {
         handler={handler}
         type={status}
       />
-      <BookList
-        setIsLogin={setIsLogin}
-        loading={loading}
-        deleteBook={deleteBook}
-        editBook={editBook}
-        data={data}
-      />
+      <BookContext.Provider value={data}>
+        <BookList
+          setIsLogin={setIsLogin}
+          loading={loading}
+          deleteBook={deleteBook}
+          editBook={editBook}
+        />
+      </BookContext.Provider>
     </>
   ) : (
     <Login setIsLogin={setIsLogin} />

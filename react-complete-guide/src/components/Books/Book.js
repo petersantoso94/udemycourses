@@ -1,8 +1,10 @@
-import React, { memo } from "react";
+import React, { memo, useContext } from "react";
+import { BookContext } from "../../Hooks/context/BookContext";
 
 const Book = memo(props => {
   //   let counter = useRef(0);
   //   console.log("Book rendered:", counter.current++);
+  const data = useContext(BookContext);
   return (
     <div
       style={{
@@ -15,7 +17,7 @@ const Book = memo(props => {
         position: "relative",
         padding: "20px"
       }}
-      onClick={() => props.editBook(props.idx)}
+      onClick={() => props.editBook(props.idx, data)}
     >
       <p style={{ marginRight: "50px" }}>Book name: {props.name}</p>
       <p style={{ marginRight: "50px" }}>Book author: {props.author}</p>

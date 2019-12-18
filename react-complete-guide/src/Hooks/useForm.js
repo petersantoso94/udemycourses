@@ -6,10 +6,16 @@ export const useForm = initState => {
   return [
     value,
     e => {
+      //on click handler
       setValue({ ...value, [e.target.name]: e.target.value });
     },
     () => {
+      //reset
       setValue({ ...initState });
+    },
+    newValue => {
+      //set all value
+      setValue({ ...newValue });
     }
   ];
 };
