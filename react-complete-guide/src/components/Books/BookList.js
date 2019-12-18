@@ -1,9 +1,9 @@
-import React, { memo } from "react";
+import React, { memo, useRef } from "react";
 import Book from "./Book";
 
-const BookList = memo(({ loading, deleteBook, data }) => {
-  //   let counter = useRef(0);
-  //   console.log("BookList rendered:", counter.current++);
+const BookList = memo(({ loading, deleteBook, data, editBook }) => {
+  let counter = useRef(0);
+  console.log("BookList rendered:", counter.current++);
 
   if (loading) return <h3>Loading...</h3>;
 
@@ -14,6 +14,7 @@ const BookList = memo(({ loading, deleteBook, data }) => {
       idx={book.id}
       name={book.name}
       author={book.author}
+      editBook={editBook}
     />
   ));
   return <>{child}</>;

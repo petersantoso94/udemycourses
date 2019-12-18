@@ -12,8 +12,8 @@ export class BookInput {
 @InputType()
 export class SearchBookInput {
   @Field(() => String, { nullable: true })
-  name: string | null;
+  name?: string;
 
   @Field(() => String, { nullable: true })
-  author: string | null;
+  author?: string;
 }

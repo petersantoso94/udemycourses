@@ -1,11 +1,9 @@
 import React, { memo } from "react";
-import { useForm } from "../../Hooks/useForm";
 
-const AddBook = memo(({ addBook }) => {
+const BookInput = memo(({ addBook, formval, reset, handler, type }) => {
   //   let counter = useRef(0);
   //   console.log("AddBook rendered:", counter.current++);
   //
-  const [formval, handler, reset] = useForm({ author: "", name: "" });
 
   return (
     <div>
@@ -25,15 +23,15 @@ const AddBook = memo(({ addBook }) => {
         <button
           type="button"
           onClick={e => {
-            addBook(e, formval);
+            addBook(e);
             reset();
           }}
         >
-          Add Book
+          {type} Book
         </button>
       </form>
     </div>
   );
 });
 
-export default AddBook;
+export default BookInput;

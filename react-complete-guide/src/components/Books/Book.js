@@ -11,12 +11,25 @@ const Book = memo(props => {
         fontSize: "20px",
         backgroundColor: "white",
         color: "black",
-        margin: "2px"
+        margin: "2px",
+        position: "relative",
+        padding: "20px"
       }}
-      onClick={() => props.delete(props.idx, props.name)}
+      onClick={() => props.editBook(props.idx)}
     >
-      <p>Book name: {props.name}</p>
-      <p>Book author: {props.author}</p>
+      <p style={{ marginRight: "50px" }}>Book name: {props.name}</p>
+      <p style={{ marginRight: "50px" }}>Book author: {props.author}</p>
+      <button
+        style={{
+          fontSize: "20px",
+          position: "absolute",
+          right: "0px",
+          top: "0px"
+        }}
+        onClick={() => props.delete(props.idx, props.name)}
+      >
+        X
+      </button>
     </div>
   );
 });

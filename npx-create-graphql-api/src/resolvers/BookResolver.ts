@@ -45,7 +45,6 @@ export class BookResolver {
       return undefined;
     }
     const wantedBook = await Book.findOne({ id });
-    console.log(wantedBook);
     if (!wantedBook) {
       return {
         errors: [
@@ -59,6 +58,37 @@ export class BookResolver {
     await Book.remove(wantedBook);
 
     return { book: wantedBook };
+  }
+
+  @Mutation(() => BookResponse)
+  @UseMiddleware(isAuth)
+  async editBook(
+    @Ctx() ctx: MyContext,
+    @Arg("book", () => SearchBookInput) book: SearchBookInput,
+    @Arg("id", () => Number) id: number
+  ): Promise<BookResponse | undefined> {
+    if (!ctx.req.session!.userId) {
+      return undefined;
+    }
+    const wantedBook = await Book.findOne({ id });
+    if (!wantedBook) {
+      return {
+        errors: [
+          {
+            path: "book",
+            message: "not found"
+          }
+        ]
+      };
+    }
+    // no return
+    // await Book.update({ id }, book);
+
+    wantedBook.name = book.name !== undefined ? book.name : wantedBook.name;
+    wantedBook.author =
+      book.author !== undefined ? book.author : wantedBook.author;
+    const newBook = await Book.save(wantedBook);
+    return { book: newBook };
   }
 
   @Query(() => [Book], { nullable: true })
