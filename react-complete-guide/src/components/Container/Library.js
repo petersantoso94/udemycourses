@@ -230,12 +230,12 @@ const Library = memo(props => {
         handler={handler}
         type={status}
       />
-      <BookContext.Provider value={data}>
+      <BookContext.Provider value={{ data, editBook }}>
         <BookList
           setIsLogin={setIsLogin}
           loading={loading}
           deleteBook={deleteBook}
-          editBook={editBook}
+          data={data}
         />
       </BookContext.Provider>
     </>
