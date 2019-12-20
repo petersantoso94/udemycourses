@@ -6,6 +6,7 @@ import { buildSchema } from "type-graphql";
 import { AuthResolvers } from "./resolvers/AuthResolvers";
 import { createConnection } from "typeorm";
 import cookieParser from "cookie-parser";
+var cors = require("cors");
 import { verify } from "jsonwebtoken";
 import { User } from "./entity/User";
 import {
@@ -16,6 +17,12 @@ import {
 
 (async () => {
   const app = express();
+  const corsOptions = {
+    origin: ["http://localhost:3002"],
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+    credentials: true
+  };
+  app.use(cors(corsOptions));
   app.use(cookieParser());
   app.get("/", (_req, res) => res.send("hello"));
 

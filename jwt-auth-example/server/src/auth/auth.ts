@@ -14,12 +14,13 @@ export const createRefreshToken = (user: User) => {
 
 export const createAccessToken = (user: User) => {
   return sign({ userId: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
-    expiresIn: "15m"
+    expiresIn: "15s"
   });
 };
 
 export const sendRefreshTokenCookie = (token: string, res: Response) => {
   return res.cookie("jid", token, {
-    httpOnly: true
+    httpOnly: true,
+    path: "/refresh_token" //only send on the path
   });
 };

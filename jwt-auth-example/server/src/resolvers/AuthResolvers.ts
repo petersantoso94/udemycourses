@@ -28,17 +28,32 @@ class LoginResponse {
 
 @Resolver()
 export class AuthResolvers {
-  @Query(() => [User])
+  @Query(() => String)
   @UseMiddleware(isAuth)
-  async users(@Ctx() { payload }: MyContext) {
-    if (payload?.userId !== 3) {
-      throw new Error("wrong user");
-    }
+  hello() {
+    return "hi!";
+  }
+
+  @Query(() => [User])
+  async users() {
     return await User.find();
   }
 
   @Mutation(() => Boolean)
-  async revoke(@Arg("userId", () => Int) userId: number): Promise<Boolean> {
+  async logout(@Ctx() { res }: MyContext): Promise<Boolean> {
+    sendRefreshTokenCookie("", res);
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async revoke(
+    @Arg("userId", () => Int) userId: number,
+    @Ctx() { payload }: MyContext
+  ): Promise<Boolean> {
+    if (payload?.userId !== 3) {
+      throw new Error("wrong user");
+    }
     try {
       await getConnection()
         .getRepository(User)
