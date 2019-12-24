@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import { capitalize } from "../../../utils/Helper";
 import Button, { buttonType } from "../../UI/Button/Button";
 
 const OrderSummary = props => {
+  const counter = useRef(0);
+  console.log("OrderSummary rendered: ", counter.current++);
   const summary = Object.keys(props.ingredients).map(ig => {
     return (
       <li key={ig}>

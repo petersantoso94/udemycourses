@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useRef } from "react";
 import "./Modal.css";
 import PropTypes from "prop-types";
 import Backdrop from "../Backdrop/Backdrop";
@@ -9,6 +9,8 @@ Modal.propTypes = {
 };
 
 function Modal(props) {
+  const counter = useRef(0);
+  console.log("Modal rendered: ", counter.current++);
   return (
     <div>
       <Backdrop show={props.show} hide={props.hide} />
@@ -25,4 +27,4 @@ function Modal(props) {
   );
 }
 
-export default memo(Modal);
+export default memo(Modal, (prev, next) => prev.show === next.show);
