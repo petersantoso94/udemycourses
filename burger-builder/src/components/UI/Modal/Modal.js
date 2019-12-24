@@ -5,7 +5,8 @@ import Backdrop from "../Backdrop/Backdrop";
 
 Modal.propTypes = {
   show: PropTypes.bool.isRequired,
-  hide: PropTypes.func.isRequired
+  hide: PropTypes.func.isRequired,
+  children: PropTypes.element
 };
 
 function Modal(props) {
@@ -27,4 +28,7 @@ function Modal(props) {
   );
 }
 
-export default memo(Modal, (prev, next) => prev.show === next.show);
+export default memo(
+  Modal,
+  (prev, next) => prev.show === next.show && prev.children === next.children
+);

@@ -1,10 +1,20 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo
+} from "react";
 import Burger from "../components/Burger/Burger";
+import PropTypes from "prop-types";
 import { ingredientType } from "../components/Burger/Ingredients/Ingredients";
 import BuildControls from "../components/Burger/BuildControls/BuildControls";
 import { BurgerContext } from "../hooks/BurgerContext";
 import Modal from "../components/UI/Modal/Modal";
 import OrderSummary from "../components/Burger/OrderSummary/OrderSummary";
+import axios from "../axios-orders";
+import Spinner from "../components/UI/Spinner/Spinner";
+import WithErrorHandler from "../hoc/WithErrorHandler/WithErrorHandler";
 
 const ingredientsPrices = {};
 
@@ -12,8 +22,11 @@ const BurgerBuilder = props => {
   const counter = useRef(0);
   console.log("BurgerBuilder rendered: ", counter.current++);
   const [ingredients, setIngredients] = useState({});
-  const [price, setPrice] = useState(2);
+  const [price, setPrice] = useState(
+    props.initialPrice ? props.initialPrice : 2
+  );
   const [purchase, setPurchase] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const purchaseHandler = useCallback(() => {
     setPurchase(true);
@@ -22,8 +35,33 @@ const BurgerBuilder = props => {
     setPurchase(false);
   }, [setPurchase]);
   const submitPurchaseHandler = useCallback(() => {
-    alert("Purchased successfully");
-  }, []);
+    // alert("Purchased successfully");
+    setLoading(true);
+    const order = {
+      ingredients,
+      price,
+      customer: {
+        name: "p",
+        address: {
+          street: "test",
+          zip: "100",
+          country: "Indie"
+        }
+      },
+      deliveryMethod: "fastest"
+    };
+    axios
+      .post("/orders", order)
+      .then(resp => {
+        setLoading(false);
+        setPurchase(false);
+      })
+      .catch(err => {
+        setLoading(false);
+        setPurchase(false);
+        console.log(err);
+      });
+  }, [ingredients, price, setLoading, setPurchase]);
 
   useEffect(() => {
     let ig = {};
@@ -68,15 +106,25 @@ const BurgerBuilder = props => {
     disabledInfo[igkey] = ingredients[igkey] <= 0;
   });
 
-  return (
-    <>
-      <Modal show={purchase} hide={cancelPurchaseHandler}>
+  const orderSum = useMemo(
+    () =>
+      loading ? (
+        <Spinner />
+      ) : (
         <OrderSummary
           totalPrice={price}
           ingredients={ingredients}
           onCancel={cancelPurchaseHandler}
           onSubmit={submitPurchaseHandler}
         />
+      ),
+    [loading, purchase]
+  );
+
+  return (
+    <>
+      <Modal show={purchase} hide={cancelPurchaseHandler}>
+        {orderSum}
       </Modal>
       <Burger ingredients={ingredients} />
       <BurgerContext.Provider value={{ addIng, removeIng }}>
@@ -89,4 +137,8 @@ const BurgerBuilder = props => {
     </>
   );
 };
-export default BurgerBuilder;
+
+BurgerBuilder.propTypes = {
+  initialPrice: PropTypes.number
+};
+export default WithErrorHandler(BurgerBuilder, axios);
