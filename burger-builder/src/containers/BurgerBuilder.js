@@ -51,7 +51,7 @@ const BurgerBuilder = props => {
       deliveryMethod: "fastest"
     };
     axios
-      .post("/orders", order)
+      .post("/orders.json", order)
       .then(resp => {
         setLoading(false);
         setPurchase(false);
