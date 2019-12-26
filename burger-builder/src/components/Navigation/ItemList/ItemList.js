@@ -4,12 +4,10 @@ import Item from "./Item/Item";
 
 const ItemList = props => (
   <ul className="ItemList">
-    <Item isActive={true} link="/">
+    <Item exact={true} link="/">
       Burger Builder
     </Item>
-    <Item isActive={false} link="/checkout">
-      Checkout
-    </Item>
+    <Item link="/orders">Orders</Item>
   </ul>
 );
 

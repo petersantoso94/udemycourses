@@ -12,9 +12,9 @@ import BuildControls from "../components/Burger/BuildControls/BuildControls";
 import { BurgerContext } from "../hooks/BurgerContext";
 import Modal from "../components/UI/Modal/Modal";
 import OrderSummary from "../components/Burger/OrderSummary/OrderSummary";
-import axios from "../axios-orders";
-import Spinner from "../components/UI/Spinner/Spinner";
-import WithErrorHandler from "../hoc/WithErrorHandler/WithErrorHandler";
+// import axios from "../axios-orders";
+// import Spinner from "../components/UI/Spinner/Spinner";
+// import WithErrorHandler from "../hoc/WithErrorHandler/WithErrorHandler";
 
 const ingredientsPrices = {};
 
@@ -26,7 +26,7 @@ const BurgerBuilder = props => {
     props.initialPrice ? props.initialPrice : 2
   );
   const [purchase, setPurchase] = useState(false);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   const purchaseHandler = useCallback(() => {
     setPurchase(true);
@@ -34,34 +34,48 @@ const BurgerBuilder = props => {
   const cancelPurchaseHandler = useCallback(() => {
     setPurchase(false);
   }, [setPurchase]);
+  // const submitPurchaseHandler = useCallback(() => {
+  //   // alert("Purchased successfully");
+  //   setLoading(true);
+  //   const order = {
+  //     ingredients,
+  //     price,
+  //     customer: {
+  //       name: "p",
+  //       address: {
+  //         street: "test",
+  //         zip: "100",
+  //         country: "Indie"
+  //       }
+  //     },
+  //     deliveryMethod: "fastest"
+  //   };
+  //   axios
+  //     .post("/orders.json", order)
+  //     .then(resp => {
+  //       setLoading(false);
+  //       setPurchase(false);
+  //     })
+  //     .catch(err => {
+  //       setLoading(false);
+  //       setPurchase(false);
+  //       console.log(err);
+  //     });
+  // }, [ingredients, price, setLoading, setPurchase]);
+
   const submitPurchaseHandler = useCallback(() => {
-    // alert("Purchased successfully");
-    setLoading(true);
-    const order = {
-      ingredients,
-      price,
-      customer: {
-        name: "p",
-        address: {
-          street: "test",
-          zip: "100",
-          country: "Indie"
-        }
-      },
-      deliveryMethod: "fastest"
-    };
-    axios
-      .post("/orders.json", order)
-      .then(resp => {
-        setLoading(false);
-        setPurchase(false);
-      })
-      .catch(err => {
-        setLoading(false);
-        setPurchase(false);
-        console.log(err);
-      });
-  }, [ingredients, price, setLoading, setPurchase]);
+    const queryParams = [];
+    for (let i in ingredients) {
+      queryParams.push(
+        encodeURIComponent(i) + "=" + encodeURIComponent(ingredients[i])
+      );
+    }
+    queryParams.push("price=" + price);
+    props.history.push({
+      pathname: "/checkout",
+      search: "?" + queryParams.join("&")
+    });
+  }, [props.history, ingredients, price]);
 
   useEffect(() => {
     let ig = {};
@@ -107,18 +121,15 @@ const BurgerBuilder = props => {
   });
 
   const orderSum = useMemo(
-    () =>
-      loading ? (
-        <Spinner />
-      ) : (
-        <OrderSummary
-          totalPrice={price}
-          ingredients={ingredients}
-          onCancel={cancelPurchaseHandler}
-          onSubmit={submitPurchaseHandler}
-        />
-      ),
-    [loading, purchase]
+    () => (
+      <OrderSummary
+        totalPrice={price}
+        ingredients={ingredients}
+        onCancel={cancelPurchaseHandler}
+        onSubmit={submitPurchaseHandler}
+      />
+    ),
+    [purchase]
   );
 
   return (
@@ -141,4 +152,5 @@ const BurgerBuilder = props => {
 BurgerBuilder.propTypes = {
   initialPrice: PropTypes.number
 };
-export default WithErrorHandler(BurgerBuilder, axios);
+// export default WithErrorHandler(BurgerBuilder, axios);
+export default BurgerBuilder;

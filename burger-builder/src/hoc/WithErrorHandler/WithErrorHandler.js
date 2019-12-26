@@ -69,18 +69,27 @@ const WithErrorHandler = (WrappedComponent, axios) =>
       );
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+      if (nextState.error === this.state.error) {
+        return false;
+      }
+      console.log("HOC WITH ERROR rendered");
+      return true;
+    }
+
     componentWillUnmount() {
       axios.interceptors.request.eject(this.reqInt);
       axios.interceptors.response.eject(this.resInt);
     }
 
+    hideModalHandler = () => {
+      this.setState({ error: null });
+    };
+
     render() {
       return (
         <>
-          <Modal
-            show={!!this.state.error}
-            hide={() => this.setState({ error: null })}
-          >
+          <Modal show={!!this.state.error} hide={this.hideModalHandler}>
             <p>{this.state.error}</p>
           </Modal>
           <WrappedComponent {...this.props} />
