@@ -63,7 +63,7 @@ export const UseForm = initialVal => {
       }
       return updatedValue;
     },
-    [state, setState]
+    [state]
   );
 
   return {

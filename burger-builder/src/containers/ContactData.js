@@ -69,7 +69,7 @@ function ContactData(props) {
   return (
     <div style={{ margin: "20px auto", width: "80%", textAlign: "center" }}>
       <h4>Enter your contact: {JSON.stringify(form)}</h4>
-      <form>
+      <form onSubmit={submitForm}>
         <Input
           label="Name"
           type="text"
@@ -103,7 +103,7 @@ function ContactData(props) {
           <option value="faster">Faster (7D)</option>
           <option value="fastest">Fastest (3D)</option>
         </Input>
-        <Button buttonType={buttonType.SUCCESS} onClick={submitForm}>
+        <Button buttonType={buttonType.SUCCESS}>
           <>Order</>
         </Button>
       </form>

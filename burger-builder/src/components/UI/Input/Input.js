@@ -16,26 +16,34 @@ export const inputType = {
 
 function Input(props) {
   let inputElement = null;
+  const arrInputElementStyles = [styles.InputElement];
+  if (props.errortext) arrInputElementStyles.push(styles.Invalid);
   switch (props.customtype) {
     case inputType.TEXT_AREA:
-      inputElement = <textarea className={styles.InputElement} {...props} />;
+      inputElement = (
+        <textarea className={arrInputElementStyles.join(" ")} {...props} />
+      );
       break;
     case inputType.SELECT:
       inputElement = (
-        <select className={styles.InputElement} {...props}>
+        <select className={arrInputElementStyles.join(" ")} {...props}>
           {props.children}
         </select>
       );
       break;
     default:
-      inputElement = <input className={styles.InputElement} {...props} />;
+      inputElement = (
+        <input className={arrInputElementStyles.join(" ")} {...props} />
+      );
       break;
   }
   return (
     <div className={styles.Input}>
       <label className={styles.Label}>{props.label}</label>
       {inputElement}
-      {props.errortext ? <p>{props.errortext}</p> : null}
+      {props.errortext ? (
+        <p className={styles.Invalid}>{props.errortext}</p>
+      ) : null}
     </div>
   );
 }

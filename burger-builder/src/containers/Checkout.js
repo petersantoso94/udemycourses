@@ -23,7 +23,7 @@ function Checkout(props) {
       } else ig[param[0]] = +param[1];
     }
     setIngredients(ig);
-  }, [props.history, setPrice]);
+  }, [props.history, setPrice, props.location.search]);
 
   const submitPurchaseHandler = useCallback(() => {
     props.history.push(props.match.path + "/contact-data");
