@@ -1,32 +1,41 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import CheckoutSummary from "../components/CheckoutSummary/CheckoutSummary";
 import { Route } from "react-router-dom";
+import { connect } from "react-redux";
 const ContactData = React.lazy(() => import("./ContactData"));
 
 Checkout.propTypes = {};
 
-function Checkout(props) {
+function Checkout({ location, history, match, ingredients, price }) {
   const counter = useRef(0);
   console.log("Checkout rendered: ", counter.current++);
-  const [ingredients, setIngredients] = useState({});
-  const [price, setPrice] = useState(0);
+  // const [ingredients, setIngredients] = useState({});
+  // const [price, setPrice] = useState(0);
 
   useEffect(() => {
-    let ig = {};
-    if (!props.location.search) {
-      props.history.replace("/");
+    if (
+      Object.entries(ingredients).length === 0 &&
+      ingredients.constructor === Object
+    ) {
+      history.replace("/");
     }
-    const query = new URLSearchParams(props.location.search);
-    for (let param of query.entries()) {
-      if (param[0] === "price") {
-        setPrice(+param[1]);
-      } else ig[param[0]] = +param[1];
-    }
-    setIngredients(ig);
-  }, [props.history, setPrice, props.location.search]);
+  }, []);
+  // useEffect(() => {
+  //   let ig = {};
+  //   if (!location.search) {
+  //     history.replace("/");
+  //   }
+  //   const query = new URLSearchParams(location.search);
+  //   for (let param of query.entries()) {
+  //     if (param[0] === "price") {
+  //       setPrice(+param[1]);
+  //     } else ig[param[0]] = +param[1];
+  //   }
+  //   setIngredients(ig);
+  // }, [history, setPrice, location.search]);
 
   const submitPurchaseHandler = useCallback(() => {
-    props.history.push(props.match.path + "/contact-data");
+    history.push(match.path + "/contact-data");
     // // alert("Purchased successfully");
     // setLoading(true);
     // const order = {
@@ -47,32 +56,33 @@ function Checkout(props) {
     //   .then(resp => {
     //     setLoading(false);
     //     alert("Purchase Success, please process your next order!");
-    //     props.history.push("/");
+    //     history.push("/");
     //   })
     //   .catch(err => {
     //     setLoading(false);
     //     console.log(err);
     //   });
-    //   }, [ingredients, price, setLoading, props.history]);
-  }, [props.history, props.match.path]);
+    //   }, [ingredients, price, setLoading, history]);
+  }, [history, match.path]);
 
   const cancelPurchaseHandler = useCallback(() => {
-    props.history.goBack();
-  }, [props.history]);
+    history.goBack();
+  }, [history]);
 
   return (
     <div>
       <CheckoutSummary
         ingredients={ingredients}
+        price={price}
         cancelHandler={cancelPurchaseHandler}
         submitHandler={submitPurchaseHandler}
       />
-      <Route
-        path={props.match.path + "/contact-data"}
-        render={() => <ContactData ingredients={ingredients} price={price} />}
-      />
+      <Route path={match.path + "/contact-data"} component={ContactData} />
     </div>
   );
 }
+const mapStateToProps = state => ({
+  ...state
+});
 
-export default Checkout;
+export default connect(mapStateToProps)(Checkout);

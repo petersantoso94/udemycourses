@@ -6,6 +6,7 @@ import WithErrorHandler from "../hoc/WithErrorHandler/WithErrorHandler";
 import Spinner from "../components/UI/Spinner/Spinner";
 import { withRouter } from "react-router-dom";
 import Input, { inputType } from "../components/UI/Input/Input";
+import { connect } from "react-redux";
 
 ContactData.propTypes = {};
 
@@ -103,7 +104,7 @@ function ContactData(props) {
           <option value="faster">Faster (7D)</option>
           <option value="fastest">Fastest (3D)</option>
         </Input>
-        <Button buttonType={buttonType.SUCCESS}>
+        <Button buttonType={buttonType.SUCCESS} onClick={() => {}}>
           <>Order</>
         </Button>
       </form>
@@ -111,4 +112,11 @@ function ContactData(props) {
   );
 }
 
-export default WithErrorHandler(withRouter(ContactData), axios);
+const mapStateToProps = state => ({
+  ...state
+});
+
+export default WithErrorHandler(
+  withRouter(connect(mapStateToProps)(ContactData)),
+  axios
+);

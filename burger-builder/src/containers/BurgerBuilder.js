@@ -12,19 +12,27 @@ import BuildControls from "../components/Burger/BuildControls/BuildControls";
 import { BurgerContext } from "../hooks/BurgerContext";
 import Modal from "../components/UI/Modal/Modal";
 import OrderSummary from "../components/Burger/OrderSummary/OrderSummary";
+import { connect } from "react-redux";
+import * as actionType from "../store/actions";
 // import axios from "../axios-orders";
 // import Spinner from "../components/UI/Spinner/Spinner";
 // import WithErrorHandler from "../hoc/WithErrorHandler/WithErrorHandler";
 
 const ingredientsPrices = {};
 
-const BurgerBuilder = props => {
+const BurgerBuilder = ({
+  initialPrice,
+  history,
+  setInitialIngredients,
+  addIngredient,
+  removeIngredient,
+  ingredients,
+  price
+}) => {
   const counter = useRef(0);
   console.log("BurgerBuilder rendered: ", counter.current++);
-  const [ingredients, setIngredients] = useState({});
-  const [price, setPrice] = useState(
-    props.initialPrice ? props.initialPrice : 2
-  );
+  // const [ingredients, setIngredients] = useState({});
+  // const [price, setPrice] = useState(initialPrice ? initialPrice : 2);
   const [purchase, setPurchase] = useState(false);
   // const [loading, setLoading] = useState(false);
 
@@ -34,48 +42,20 @@ const BurgerBuilder = props => {
   const cancelPurchaseHandler = useCallback(() => {
     setPurchase(false);
   }, [setPurchase]);
-  // const submitPurchaseHandler = useCallback(() => {
-  //   // alert("Purchased successfully");
-  //   setLoading(true);
-  //   const order = {
-  //     ingredients,
-  //     price,
-  //     customer: {
-  //       name: "p",
-  //       address: {
-  //         street: "test",
-  //         zip: "100",
-  //         country: "Indie"
-  //       }
-  //     },
-  //     deliveryMethod: "fastest"
-  //   };
-  //   axios
-  //     .post("/orders.json", order)
-  //     .then(resp => {
-  //       setLoading(false);
-  //       setPurchase(false);
-  //     })
-  //     .catch(err => {
-  //       setLoading(false);
-  //       setPurchase(false);
-  //       console.log(err);
-  //     });
-  // }, [ingredients, price, setLoading, setPurchase]);
 
   const submitPurchaseHandler = useCallback(() => {
-    const queryParams = [];
-    for (let i in ingredients) {
-      queryParams.push(
-        encodeURIComponent(i) + "=" + encodeURIComponent(ingredients[i])
-      );
-    }
-    queryParams.push("price=" + price);
-    props.history.push({
-      pathname: "/checkout",
-      search: "?" + queryParams.join("&")
+    // const queryParams = [];
+    // for (let i in ingredients) {
+    //   queryParams.push(
+    //     encodeURIComponent(i) + "=" + encodeURIComponent(ingredients[i])
+    //   );
+    // }
+    // queryParams.push("price=" + price);
+    history.push({
+      pathname: "/checkout"
+      // search: "?" + queryParams.join("&")
     });
-  }, [props.history, ingredients, price]);
+  }, [history]);
 
   useEffect(() => {
     let ig = {};
@@ -83,36 +63,50 @@ const BurgerBuilder = props => {
       ig[key] = 0;
       ingredientsPrices[key] = Math.ceil(Math.random() * 10, 2);
     });
-    setIngredients(ig);
-  }, []);
+    // setIngredients(ig);
+
+    // set up redux initial state
+    setInitialIngredients({
+      ingredients: ig,
+      ingredientsPrices,
+      price: initialPrice ? initialPrice : 2
+    });
+  }, [initialPrice, setInitialIngredients]);
 
   const addIng = useCallback(
     type => {
-      setIngredients(oldState => {
-        return { ...oldState, [type]: oldState[type] + 1 };
-      });
+      // setIngredients(oldState => {
+      //   return { ...oldState, [type]: oldState[type] + 1 };
+      // });
 
-      setPrice(oldState => {
-        return oldState + ingredientsPrices[type];
-      });
+      // setPrice(oldState => {
+      //   return oldState + ingredientsPrices[type];
+      // });
+
+      // dispatch event to update ingredients state
+      addIngredient({ type });
     },
-    [setIngredients, setPrice]
+    // [setIngredients, setPrice, addIngredient]
+    [addIngredient]
   );
 
   const removeIng = useCallback(
     type => {
-      setIngredients(oldState => {
-        return {
-          ...oldState,
-          [type]: oldState[type] - 1
-        };
-      });
+      // setIngredients(oldState => {
+      //   return {
+      //     ...oldState,
+      //     [type]: oldState[type] - 1
+      //   };
+      // });
 
-      setPrice(oldState => {
-        return oldState - ingredientsPrices[type];
-      });
+      // setPrice(oldState => {
+      //   return oldState - ingredientsPrices[type];
+      // });
+
+      removeIngredient({ type });
     },
-    [setIngredients, setPrice]
+    // [setIngredients, setPrice]
+    [removeIngredient]
   );
 
   let disabledInfo = {};
@@ -153,4 +147,20 @@ BurgerBuilder.propTypes = {
   initialPrice: PropTypes.number
 };
 // export default WithErrorHandler(BurgerBuilder, axios);
-export default BurgerBuilder;
+
+const mapStateToProps = state => ({
+  ...state
+});
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setInitialIngredients: payload =>
+      dispatch({ type: actionType.INITIATE_INGREDIENTS_AND_PRICE, payload }),
+    addIngredient: payload =>
+      dispatch({ type: actionType.ADD_CHOSEN_INGREDIENT, payload }),
+    removeIngredient: payload =>
+      dispatch({ type: actionType.REMOVE_ONE_CHOSEN_INGREDIENT, payload })
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BurgerBuilder);

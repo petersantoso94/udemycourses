@@ -6,6 +6,7 @@ import "./CheckoutSummary.css";
 
 CheckoutSummary.propTypes = {
   ingredients: PropTypes.object.isRequired,
+  price: PropTypes.number.isRequired,
   cancelHandler: PropTypes.func.isRequired,
   submitHandler: PropTypes.func.isRequired
 };
@@ -15,7 +16,9 @@ function CheckoutSummary(props) {
   console.log("CheckoutSummary rendered: ", counter.current++);
   return (
     <div className="CheckoutSummary">
-      <h1>We hope it taste well</h1>
+      <h1>
+        We hope it taste well, your $<strong>{props.price}</strong> burger!
+      </h1>
       <div>
         <div style={{ width: "100%", margin: "auto" }}>
           <Burger ingredients={props.ingredients} />
