@@ -3,7 +3,8 @@ import React, { Component } from "react";
 import CounterControl from "../../components/CounterControl/CounterControl";
 import CounterOutput from "../../components/CounterOutput/CounterOutput";
 import { connect } from "react-redux";
-import * as ActionType from "../../store/actions";
+import * as ActionType from "../../store/actions/actionTypes";
+import { increment, incrementBy } from "../../store/actions/counter";
 
 class Counter extends Component {
   state = {
@@ -89,12 +90,8 @@ const mapStateToProps = state => {
 
 function mapDispatchToProps(dispatch) {
   return {
-    onIncrementCounter: () =>
-      dispatch({
-        type: ActionType.INCREMENT
-      }),
-    onIncrementBy: value =>
-      dispatch({ type: ActionType.INCREMENT_BY, payload: value }),
+    onIncrementCounter: () => dispatch(increment()),
+    onIncrementBy: value => dispatch(incrementBy(value)),
     onStoreResult: res =>
       dispatch({ type: ActionType.STORE_RESULT, payload: { counter: res } }),
     onDeleteResult: id =>
