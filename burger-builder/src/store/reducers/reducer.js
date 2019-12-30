@@ -1,4 +1,4 @@
-import * as typeName from "./actions";
+import * as typeName from "../actions/actionTypes";
 
 const initialState = { ingredients: {}, ingredientsPrices: {}, price: 0 };
 
@@ -27,7 +27,7 @@ export default (state = initialState, { type, payload }) => {
           ...state.ingredients,
           [payload.type]: state.ingredients[payload.type] - 1
         },
-        price: state.price + state.ingredientsPrices[payload.type]
+        price: state.price - state.ingredientsPrices[payload.type]
       };
     default:
       return state;

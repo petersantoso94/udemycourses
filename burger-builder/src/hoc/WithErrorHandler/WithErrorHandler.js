@@ -70,9 +70,9 @@ const WithErrorHandler = (WrappedComponent, axios) =>
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-      if (nextState.error === this.state.error) {
-        return false;
-      }
+      // if (nextState.error === this.state.error) {
+      //   return false;
+      // }
       console.log("HOC WITH ERROR rendered");
       return true;
     }

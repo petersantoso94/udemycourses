@@ -28,7 +28,8 @@ function Modal(props) {
   );
 }
 
-export default memo(
-  Modal,
-  (prev, next) => prev.show === next.show && prev.children === next.children
-);
+export default memo(Modal, (prev, next) => {
+  // console.log("MODAL PREV",prev)
+  // console.log("MODAL NEXT",next)
+  return prev.show === next.show && prev.children === next.children;
+});

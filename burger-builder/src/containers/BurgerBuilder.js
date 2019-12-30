@@ -7,18 +7,20 @@ import React, {
 } from "react";
 import Burger from "../components/Burger/Burger";
 import PropTypes from "prop-types";
-import { ingredientType } from "../components/Burger/Ingredients/Ingredients";
+// import { ingredientType } from "../components/Burger/Ingredients/Ingredients";
 import BuildControls from "../components/Burger/BuildControls/BuildControls";
 import { BurgerContext } from "../hooks/BurgerContext";
 import Modal from "../components/UI/Modal/Modal";
 import OrderSummary from "../components/Burger/OrderSummary/OrderSummary";
 import { connect } from "react-redux";
-import * as actionType from "../store/actions";
-// import axios from "../axios-orders";
+import * as actionType from "../store/actions/actionTypes";
+import { setInitValue } from "../store/actions/burgerBuilder";
+import WithErrorHandler from "../hoc/WithErrorHandler/WithErrorHandler";
+import axios from "../axios-orders";
 // import Spinner from "../components/UI/Spinner/Spinner";
 // import WithErrorHandler from "../hoc/WithErrorHandler/WithErrorHandler";
 
-const ingredientsPrices = {};
+// const ingredientsPrices = {};
 
 const BurgerBuilder = ({
   initialPrice,
@@ -58,17 +60,15 @@ const BurgerBuilder = ({
   }, [history]);
 
   useEffect(() => {
-    let ig = {};
-    Object.keys(ingredientType).forEach(key => {
-      ig[key] = 0;
-      ingredientsPrices[key] = Math.ceil(Math.random() * 10, 2);
-    });
+    // let ig = {};
+    // Object.keys(ingredientType).forEach(key => {
+    //   ig[key] = 0;
+    //   ingredientsPrices[key] = Math.ceil(Math.random() * 10, 2);
+    // });
     // setIngredients(ig);
 
     // set up redux initial state
     setInitialIngredients({
-      ingredients: ig,
-      ingredientsPrices,
       price: initialPrice ? initialPrice : 2
     });
   }, [initialPrice, setInitialIngredients]);
@@ -154,8 +154,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => {
   return {
-    setInitialIngredients: payload =>
-      dispatch({ type: actionType.INITIATE_INGREDIENTS_AND_PRICE, payload }),
+    setInitialIngredients: payload => dispatch(setInitValue(payload)),
     addIngredient: payload =>
       dispatch({ type: actionType.ADD_CHOSEN_INGREDIENT, payload }),
     removeIngredient: payload =>
@@ -163,4 +162,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(BurgerBuilder);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WithErrorHandler(BurgerBuilder, axios));
