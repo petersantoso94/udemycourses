@@ -2,6 +2,7 @@
 
 ```
 npm install --save prop-types
+npm install --save-dev enzyme react-test-renderer jest enzyme-adapter-react-16
 ```
 
 ### Notes:
