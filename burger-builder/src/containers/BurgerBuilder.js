@@ -22,7 +22,7 @@ import axios from "../axios-orders";
 
 // const ingredientsPrices = {};
 
-const BurgerBuilder = ({
+export const BurgerBuilder = ({
   initialPrice,
   history,
   setInitialIngredients,
