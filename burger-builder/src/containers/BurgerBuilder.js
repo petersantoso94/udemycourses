@@ -149,7 +149,7 @@ BurgerBuilder.propTypes = {
 // export default WithErrorHandler(BurgerBuilder, axios);
 
 const mapStateToProps = state => ({
-  ...state
+  ...state.burger
 });
 
 const mapDispatchToProps = dispatch => {

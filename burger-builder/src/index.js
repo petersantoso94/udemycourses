@@ -5,8 +5,9 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
-import { createStore, compose, applyMiddleware } from "redux";
+import { createStore, compose, applyMiddleware, combineReducers } from "redux";
 import reducer from "./store/reducers/reducer";
+import order from "./store/reducers/order";
 import thunk from "redux-thunk";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -20,8 +21,10 @@ const logger = store => {
     };
   };
 };
+
+const rootReducer = combineReducers({ burger: reducer, order });
 const store = createStore(
-  reducer,
+  rootReducer,
   composeEnhancers(applyMiddleware(logger, thunk))
 );
 

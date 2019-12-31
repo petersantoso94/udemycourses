@@ -2,17 +2,19 @@ import React, { useEffect, useCallback, useRef } from "react";
 import CheckoutSummary from "../components/CheckoutSummary/CheckoutSummary";
 import { Route } from "react-router-dom";
 import { connect } from "react-redux";
+import { initOrder } from "../store/actions/order";
 const ContactData = React.lazy(() => import("./ContactData"));
 
 Checkout.propTypes = {};
 
-function Checkout({ location, history, match, ingredients, price }) {
+function Checkout({ initPurchase, history, match, ingredients, price }) {
   const counter = useRef(0);
   console.log("Checkout rendered: ", counter.current++);
   // const [ingredients, setIngredients] = useState({});
   // const [price, setPrice] = useState(0);
 
   useEffect(() => {
+    initPurchase();
     if (
       Object.entries(ingredients).length === 0 &&
       ingredients.constructor === Object
@@ -82,7 +84,13 @@ function Checkout({ location, history, match, ingredients, price }) {
   );
 }
 const mapStateToProps = state => ({
-  ...state
+  ...state.burger
 });
 
-export default connect(mapStateToProps)(Checkout);
+const mapDispatchToProps = dispatch => ({
+  initPurchase: () => {
+    dispatch(initOrder());
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Checkout);

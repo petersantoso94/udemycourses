@@ -1,16 +1,23 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef } from "react";
 import { UseForm, ValidationType } from "../hooks/UseForm";
 import Button, { buttonType } from "../components/UI/Button/Button";
 import axios from "../axios-orders";
 import WithErrorHandler from "../hoc/WithErrorHandler/WithErrorHandler";
 import Spinner from "../components/UI/Spinner/Spinner";
-import { withRouter } from "react-router-dom";
+import { withRouter, Redirect } from "react-router-dom";
 import Input, { inputType } from "../components/UI/Input/Input";
 import { connect } from "react-redux";
+import { submitOrder } from "../store/actions/order";
 
 ContactData.propTypes = {};
 
-function ContactData(props) {
+function ContactData({
+  loading,
+  ingredients,
+  price,
+  purchased,
+  submitOrderHandler
+}) {
   const counter = useRef(0);
   console.log("ContactData rendered: ", counter.current++);
   const { form, onChangeHandler, onBlurHandler, isFormValid } = UseForm({
@@ -26,43 +33,37 @@ function ContactData(props) {
     },
     delivery: { value: "", validation: [], errorMsg: "" }
   });
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   const submitForm = useCallback(
     e => {
       e.preventDefault();
       if (!isFormValid()) return;
-      setLoading(true);
+      // setLoading(true);
       const order = {
-        ingredients: props.ingredients,
-        price: props.price,
+        ingredients: ingredients,
+        price: price,
         customer: {
           name: form.name.value,
           email: form.email.value,
           delivery: form.delivery.value
         }
       };
-      axios
-        .post("/orders.json", order)
-        .then(resp => {
-          setLoading(false);
-          alert("Purchase Success, please process your next order!");
-          props.history.push("/");
-        })
-        .catch(err => {
-          setLoading(false);
-          console.log(err);
-        });
+      submitOrderHandler(order);
     },
     [
-      setLoading,
-      props.ingredients,
-      props.price,
+      // setLoading,
+      ingredients,
+      price,
       form,
-      props.history,
-      isFormValid
+      isFormValid,
+      submitOrderHandler
     ]
   );
+
+  if (purchased) {
+    return <Redirect to="/" />;
+  }
 
   if (loading) {
     return <Spinner />;
@@ -113,10 +114,17 @@ function ContactData(props) {
 }
 
 const mapStateToProps = state => ({
-  ...state
+  ...state.burger,
+  ...state.order
 });
 
-export default WithErrorHandler(
-  withRouter(connect(mapStateToProps)(ContactData)),
-  axios
-);
+const mapDispatchToProps = dispatch => ({
+  submitOrderHandler: payload => {
+    dispatch(submitOrder(payload));
+  }
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WithErrorHandler(withRouter(ContactData), axios));
