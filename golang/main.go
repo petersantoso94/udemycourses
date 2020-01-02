@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+	"net/http"
+)
 
 // pointer tutorial
 type person struct {
@@ -44,6 +48,13 @@ func printGreetings(b bot) {
 	fmt.Println(b.getGreetings("test"))
 }
 
+type customWritter struct{}
+
+func (customWritter) Write(p []byte) (n int, err error) {
+	fmt.Println(string(p))
+	return 0, nil
+}
+
 func main() {
 	cards, err := newDeckFromFile("deck")
 	if err != nil {
@@ -80,4 +91,20 @@ func main() {
 	chn := chnBot{}
 	printGreetings(chn)
 	printGreetings(eng)
+
+	h, errh := http.Get("http://google.com")
+	if errh != nil {
+		fmt.Printf(errh.Error())
+	}
+	// fbody := make([]byte, 99999)
+	// n, errread := h.Body.Read(fbody)
+	// if errread != nil {
+	// 	fmt.Println(errread.Error())
+	// }
+	// fmt.Println(fmt.Sprintf("%v bytes", n))
+	// fmt.Printf(string(fbody))
+
+	// use io Copy
+	// os stdout implements writter interface, response body implements reader interface
+	io.Copy(customWritter{}, h.Body)
 }
